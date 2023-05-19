@@ -1,0 +1,113 @@
+sudo apt-get update
+created an ubuntu instance on ec2
+connect the instance
+run command - sudo apt-get update
+
+
+fist test whether the application is working locally on the instance for that write the command - python manage.py makemigrations
+- python manage.py migrate
+- python manage.py createsuperuser
+- $ python manage.py runserver 
+
+it won't open directly you'll have to add an inbound rule for custom tcp for and allow all ipv4 ips 0.0.0.0/ and map a port 8001 or 8002 into it
+
+now again run the command - python manage.py runserver 0.0.0.0:8002
+
+now go to instance over there is a public ipv4 address
+
+copy that and add: 8002 at last$ python manage.py runserver
+your django to do application is visible 
+
+
+Now containerize it using docker
+
+write the docker commands as---
+
+docker build .
+
+docker run -d -p 8002:8001 "container_id" // the -d runs it in daemon mode and -p is used to map the local port to the global port.
+
+
+Installing jenkins on AWS
+
+1- run command sudo apt update
+2- install jenkins's supported version of java (jdk 11 preffered )
+
+3- now go to jenkins.org-> installation on linux/debian --- simply copy paste the given commandsssh -i "ubuntu_vaibhav.pem" ubuntu@ec2-3-88-181-121.compute-1.amazonaws.com
+
+4- after jenkin is installed, run command-
+	i- sudo systemctl enable jenkins
+	ii- sudo systemctl start jenkins
+	iii- sudo systemctl status jenkins
+ Make sure in status it shows active(running)
+ 
+ now add an inbount security rule for port 8080 in your instalnce- go to security-> inbound rules-> edit inbound rules- add new- 8080 custom tcp allow all ipv4-> save
+ 
+ Set up your jenkins
+ 
+ 
+ you can also automate installation of jenkins using docker.
+ 
+ first stop the previously running jenkins [sudo systemctl stop jenkins]
+ 
+ 
+ run commands sudo docker pull jenkins/jenkins
+ 
+ then run sudo docker run -d -p 8080:8080 docker.io/jenkins/jenkins:latest
+ 
+ 
+ go to port 8080 of your open ip address
+ jenkins will run normally
+ 
+ 
+ _______________________________________________________________________
+ JENKINS TUTORIAL
+ TIll now the installation part is done by following the baove steps....the manula installation is being followed and not the jenkins image pulled from docker.(Note it down)
+ 
+Now let's see  HOW TO INTEGRATE JENKINS CONTINUOUS DEVELOPMENT(CD)
+ 
+ we have to create a NODE first (Node is an environment that allows us to create a pipeline)
+ 
+ bsically the node environment is completely defined as getting your code from one server(github) and deploying it on another server(aws).
+ 
+ 
+ 
+ 
+ for that set up an agent
+give a node name-> select permanent agent and create
+further configs->
+
+add the remote root directory (e.g- /home/ubuntu )
+
+set launch method as use websocket
+then save
+
+
+Now go to dashboard and create a new job
+
+give a name and select freestyle project and ok
+
+then the confog page opens(very important)
+Select source code as none the go to build steps and select execute shell
+
+
+
+
+
+curl -sO http://54.211.137.251:8080/jnlpJars/agent.jar
+java -jar agent.jar -jnlpUrl http://54.211.137.251:8080/manage/computer/ToDo%2DApp%2DDev/jenkins-agent.jnlp -secret d5e63f28a84c990a3c0dcbf2569f0b7e7e2e31f5a8bc9ea0c3f575ebc4e1a255 -workDir "/home/ubuntu"
+ 
+ 
+ 
+echo d5e63f28a84c990a3c0dcbf2569f0b7e7e2e31f5a8bc9ea0c3f575ebc4e1a255 > secret-file
+curl -sO http://54.211.137.251:8080/jnlpJars/agent.jar
+java -jar agent.jar -jnlpUrl http://54.211.137.251:8080/manage/computer/ToDo%2DApp%2DDev/jenkins-agent.jnlp -secret @secret-file -workDir "/home/ubuntu"
+ 
+ 
+ 
+ 
+ 
+Just buit and deployed a complete End to End Continuous Delivery pipeline using Jenkins for a sample Django ToDo Application on AWS.
+Thank you ____ for your guidance and support.
+
+Got to learn much about Docker, Jenkins Node, agents and jobs.
